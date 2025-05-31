@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const connectDB = require('./config/db');
+const User = require('./models/User');
+const bcrypt = require('bcryptjs');
 
 const bookingRoutes = require('./routes/bookingRoutes');
 const contactRoutes = require('./routes/contactRoutes');
@@ -16,6 +18,26 @@ app.use(express.json());
 
 // Connect to DB
 connectDB();
+
+async function ensureAdminUser() {
+  const adminEmail = process.env.EMAIL_USER;
+  const adminName = 'Admin';
+  const defaultPassword = 'admin123';
+
+  let admin = await User.findOne({ email: adminEmail, isAdmin: true });
+  if (!admin) {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(defaultPassword, salt);
+    await User.create({
+      name: adminName,
+      email: adminEmail,
+      password: hash,
+      isAdmin: true,
+    });
+    console.log('Admin user created');
+  }
+}
+ensureAdminUser();
 
 // Routes
 app.get('/', (req, res) => res.send('Construction Website Backend Running'));

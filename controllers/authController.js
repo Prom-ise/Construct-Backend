@@ -1,14 +1,11 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const User = require('../models/User');
 
-const ADMIN_EMAIL = process.env.EMAIL_USER
-let ADMIN_PASSWORD_HASH;
+const ADMIN_EMAIL = process.env.EMAIL_USER;
 
-(async () => {
-  const salt = await bcrypt.genSalt(10);
-  ADMIN_PASSWORD_HASH = await bcrypt.hash('admin123', salt);
-})();
+let resetCode;
 
 const login = async (req, res) => {
   try {
@@ -17,7 +14,11 @@ const login = async (req, res) => {
     if (email !== ADMIN_EMAIL)
       return res.status(403).json({ message: 'Not authorized' });
 
-    const isMatch = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
+    const admin = await User.findOne({ email, isAdmin: true });
+    if (!admin)
+      return res.status(403).json({ message: 'Admin not found' });
+
+    const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch)
       return res.status(400).json({ message: 'Invalid credentials' });
 
@@ -26,15 +27,12 @@ const login = async (req, res) => {
     res.status(200).json({
       message: 'Login successful',
       token,
-      user: { name: 'Admin', email },
+      user: { name: admin.name, email },
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-
-// Send password reset code to admin email
-let resetCode;
 
 const sendResetCode = async (req, res) => {
   try {
@@ -61,8 +59,7 @@ const sendResetCode = async (req, res) => {
   }
 };
 
-// Change password with code
- const resetPassword = async (req, res) => {
+const resetPassword = async (req, res) => {
   try {
     const { code, newPassword } = req.body;
 
@@ -70,7 +67,12 @@ const sendResetCode = async (req, res) => {
       return res.status(400).json({ message: 'Invalid reset code' });
 
     const salt = await bcrypt.genSalt(10);
-    ADMIN_PASSWORD_HASH = await bcrypt.hash(newPassword, salt);
+    const hash = await bcrypt.hash(newPassword, salt);
+
+    await User.findOneAndUpdate(
+      { email: ADMIN_EMAIL, isAdmin: true },
+      { password: hash }
+    );
 
     resetCode = null;
 
