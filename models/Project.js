@@ -11,7 +11,7 @@ const projectSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ['Building from Scratch', 'Plan and Layouts', 'Completing', 'Evaluation', 'drainage', 'road', 'Shops, malls,mart, complexes', 'Bridges', 'Warehouses', 'Pens and farmhouses'],
+      enum: ['Building from Scratch', 'Plan and Layouts', 'Completing', 'Evaluation', 'Drainage', 'Road', 'Shops, malls,mart, complexes', 'Bridges', 'Warehouses', 'Pens and farmhouses'],
       required: true,
     },
   },
