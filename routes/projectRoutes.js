@@ -4,32 +4,6 @@ const Project = require('../models/Project');
 const { authenticateUser, isAdmin } = require('../middleware/authMiddleware');
 const upload = require('../middleware/upload'); // Assuming you export the multer configuration
 
-// Create a new project (admin only)
-// router.post(
-//   '/add',
-//   authenticateUser,
-//   isAdmin,
-//   upload.single('image'),
-//   async (req, res) => {
-//     const { title, description, status, category } = req.body;
-//     const imageUrl = `/uploads/${req.file.filename}`; // saved file path
-
-//     try {
-//       const newProject = new Project({
-//         title,
-//         description,
-//         image: imageUrl,
-//         status: status || 'ongoing',
-//         category,
-//       });
-
-//       await newProject.save();
-//       res.status(201).json(newProject);
-//     } catch (err) {
-//       res.status(500).json({ error: err.message });
-//     }
-//   }
-// );
 
 const { createProject } = require('../controllers/projectController');
 

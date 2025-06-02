@@ -1,14 +1,30 @@
 const Project = require('../models/Project');
+const cloudinary = require('../cloudinary/cloudinaryConfig');
 
 const createProject = async (req, res) => {
   try {
     const { title, description, status, category } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : undefined;
+    let imageUrl = "";
+
+    if (req.file) {
+      // Upload to Cloudinary
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: 'projects' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+      imageUrl = uploadResult.secure_url;
+    }
 
     const newProject = new Project({
       title,
       description,
-      image,
+      image: imageUrl,
       status: status || 'ongoing',
       category,
     });
@@ -16,10 +32,7 @@ const createProject = async (req, res) => {
     const saved = await newProject.save();
     res.status(201).json(saved);
   } catch (err) {
-    console.error('Project save error:', err);
     res.status(400).json({ msg: 'Error creating project', error: err.message });
-    console.log('BODY:', req.body);
-    console.log('FILE:', req.file);
   }
 };
 
