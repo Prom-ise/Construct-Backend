@@ -37,7 +37,7 @@ async function ensureAdminUser() {
     console.log('Admin user created');
   }
 }
-ensureAdminUser();
+ensureAdminUser();  
 
 // Routes
 app.get('/', (req, res) => res.send('Construction Website Backend Running'));
