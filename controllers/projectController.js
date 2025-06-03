@@ -34,6 +34,8 @@ const createProject = async (req, res) => {
   } catch (err) {
     res.status(400).json({ msg: 'Error creating project', error: err.message });
   }
+  console.log('BODY:', req.body);
+console.log('FILE:', req.file);
 };
 
 const getProjects = async (req, res) => {
