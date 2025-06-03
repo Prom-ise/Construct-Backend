@@ -32,8 +32,9 @@ const createProject = async (req, res) => {
     const saved = await newProject.save();
     res.status(201).json(saved);
   } catch (err) {
-    res.status(400).json({ msg: 'Error creating project', error: err.message });
-  }
+  console.error('Project save error:', err);
+  res.status(400).json({ msg: 'Error creating project', error: err.message, details: err.errors });
+}
   console.log('BODY:', req.body);
 console.log('FILE:', req.file);
 };
