@@ -18,8 +18,6 @@ const projectSchema = new mongoose.Schema(
       ],
       required: true,
     },
-    clientName: { type: String },
-    email: { type: String },
   },
   { timestamps: true }
 );
