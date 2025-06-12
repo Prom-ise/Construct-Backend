@@ -18,7 +18,7 @@ const sendResetCode = async (to, code) => {
 };
 
 const sendAdminEmail = async (booking) => {
-  const { name, email, phone, projectType, message } = booking;
+  const { clientName, email, phone, projectType, message } = booking;
 
   return transporter.sendMail({
     from: `"Construct HQ" <${process.env.EMAIL_USER}>`,
@@ -26,7 +26,7 @@ const sendAdminEmail = async (booking) => {
     subject: 'New Project Booking Submitted',
     html: `
       <h3>New Booking Received</h3>
-      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Name:</strong> ${clientName}</p>
       <p><strong>Email:</strong> ${email}</p>
       <p><strong>Phone:</strong> ${phone}</p>
       <p><strong>Project Type:</strong> ${projectType}</p>
@@ -36,14 +36,14 @@ const sendAdminEmail = async (booking) => {
 };
 
 const sendUserConfirmationEmail = async (booking) => {
-  const { name, email, projectType } = booking;
+  const { clientName, email, projectType } = booking;
 
   return transporter.sendMail({
     from: `"Construct HQ" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: 'Booking Confirmation – Construct HQ',
     html: `
-      <p>Hi ${name},</p>
+      <p>Hi ${clientName},</p>
       <p>Thank you for booking a <strong>${projectType}</strong> project with us!</p>
       <p>We’ve received your request and will get in touch shortly.</p>
       <p>– The Construct HQ Team</p>
@@ -62,7 +62,7 @@ const handleBooking = async (newBooking) => {
   }
 };
 
-const sendProjectCompletionEmail = async ({ name, email, projectType }) => {
+const sendProjectCompletionEmail = async ({ clientName, email, projectType }) => {
   return transporter.sendMail({
     from: `"Construct HQ" <${process.env.EMAIL_USER}>`,
     to: email,
@@ -70,7 +70,7 @@ const sendProjectCompletionEmail = async ({ name, email, projectType }) => {
     html: `
       <div style="font-family: Arial, sans-serif; background: #f7f7f7; padding: 32px;">
         <div style="max-width: 500px; margin: auto; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #eee; padding: 32px;">
-          <h2 style="color: #fe5d14; text-align: center;">Congratulations, ${name}!</h2>
+          <h2 style="color: #fe5d14; text-align: center;">Congratulations, ${clientName}!</h2>
           <p style="font-size: 16px; color: #333;">
             We are excited to let you know that your <strong>${projectType}</strong> project has been <span style="color: #28a745; font-weight: bold;">successfully completed</span>!
           </p>
