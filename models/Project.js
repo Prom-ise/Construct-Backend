@@ -11,12 +11,17 @@ const projectSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ['Building from scratch', 'Plan and Layouts', 'Completing', 'Evaluation', 'Drainage', 'Road', 'Shops, malls, mart, complexes', 'Bridges', 'Warehouses', 'Pens and farmhouses'],
+      enum: [
+        'Building from scratch', 'Plan and Layouts', 'Completing', 'Evaluation',
+        'Drainage', 'Road', 'Shops, malls, mart, complexes', 'Bridges',
+        'Warehouses', 'Pens and farmhouses'
+      ],
       required: true,
     },
+    clientName: { type: String },
+    email: { type: String },
   },
   { timestamps: true }
 );
-
 
 module.exports = mongoose.model('Project', projectSchema);

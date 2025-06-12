@@ -1,9 +1,10 @@
 const Project = require('../models/Project');
 const cloudinary = require('../cloudinary/cloudinaryConfig');
+const { sendProjectCompletionEmail } = require('../utils/sendEmail');
 
 const createProject = async (req, res) => {
   try {
-    const { title, description, status, category } = req.body;
+    const { title, description, status, category, clientName, email } = req.body; // <-- add clientName, email
     let imageUrl = "";
 
     if (req.file) {
@@ -27,16 +28,18 @@ const createProject = async (req, res) => {
       image: imageUrl,
       status: status || 'ongoing',
       category,
+      clientName, // <-- save clientName
+      email      // <-- save email
     });
 
     const saved = await newProject.save();
     res.status(201).json(saved);
   } catch (err) {
-  console.error('Project save error:', err);
-  res.status(400).json({ msg: 'Error creating project', error: err.message, details: err.errors });
-}
+    console.error('Project save error:', err);
+    res.status(400).json({ msg: 'Error creating project', error: err.message, details: err.errors });
+  }
   console.log('BODY:', req.body);
-console.log('FILE:', req.file);
+  console.log('FILE:', req.file);
 };
 
 const getProjects = async (req, res) => {
@@ -52,6 +55,17 @@ const getProjects = async (req, res) => {
 const updateProject = async (req, res) => {
   try {
     const updated = await Project.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+    // Send completion email if status is set to "completed"
+    if (updated && req.body.status === "completed") {
+      // Make sure your Project model has 'email' and 'title' fields
+      await sendProjectCompletionEmail({
+        name: updated.title || "Client", // or updated.name if you store client name
+        email: updated.email,            // make sure you store client email in the project
+        projectType: updated.category    // or updated.projectType if you have that field
+      });
+    }
+
     res.status(200).json(updated);
   } catch (err) {
     res.status(400).json({ msg: 'Error updating project', error: err.message });

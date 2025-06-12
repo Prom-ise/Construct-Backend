@@ -4,14 +4,14 @@ const { handleBooking } = require('../utils/sendEmail');
 // 📝 Create a booking
 exports.createBooking = async (req, res) => {
   try {
-    const { name, email, phone, projectType, message, date, service } = req.body;
+    const { clientName, email, phone, projectType, message, date, service } = req.body;
 
-    if (!name || !email || !phone || !projectType || !date || !service) {
+    if (!clientName || !email || !phone || !projectType || !date || !service) {
       return res.status(400).json({ error: 'All fields including date and service are required' });
     }
 
     const newBooking = new Booking({
-      name,
+      clientName,
       email,
       phone,
       projectType,
