@@ -81,7 +81,7 @@ const sendProjectCompletionEmail = async ({ clientName, email, projectType }) =>
             If you have any feedback or need further assistance, our team is always here for you.
           </p>
           <div style="margin: 32px 0; text-align: center;">
-            <a href="https://yourwebsite.com" style="background: #fe5d14; color: #fff; padding: 12px 28px; border-radius: 5px; text-decoration: none; font-weight: bold;">See More Projects</a>
+            <a href="https://construction-website-beryl-one.vercel.app/services" style="background: #fe5d14; color: #fff; padding: 12px 28px; border-radius: 5px; text-decoration: none; font-weight: bold;">See More Projects</a>
           </div>
           <p style="font-size: 15px; color: #888; text-align: center;">
             We look forward to working with you again.<br>
