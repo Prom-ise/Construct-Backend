@@ -1,5 +1,5 @@
 const Booking = require('../models/Booking');
-const { handleBooking } = require('../utils/sendEmail');
+const { handleBooking, sendProjectCompletionEmail } = require('../utils/sendEmail');
 
 // 📝 Create a booking
 exports.createBooking = async (req, res) => {
@@ -27,6 +27,32 @@ exports.createBooking = async (req, res) => {
   } catch (err) {
     console.error('Booking creation error:', err);
     res.status(400).json({ error: err.message || 'Something went wrong' });
+  }
+};
+
+exports.markBookingCompleted = async (req, res) => {
+  try {
+    const booking = await Booking.findByIdAndUpdate(
+      req.params.id,
+      { status: 'completed' },
+      { new: true }
+    );
+
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    // Send completion email to client
+    await sendProjectCompletionEmail({
+      name: booking.clientName,
+      email: booking.email,
+      projectType: booking.projectType
+    });
+
+    res.status(200).json({ message: 'Booking marked as completed and email sent!', booking });
+  } catch (err) {
+    console.error('Error marking booking as completed:', err);
+    res.status(500).json({ error: err.message || 'Server error' });
   }
 };
 

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Booking = require('../models/Booking');
-const { createBooking, getBookings } = require('../controllers/bookingController');
+const { createBooking, getBookings, markBookingCompleted } = require('../controllers/bookingController');
 const { authenticateUser, isAdmin } = require('../middleware/authMiddleware.js');
 
 // ✅ Create a new booking (public)
@@ -11,19 +11,7 @@ router.post('/', createBooking);
 router.get('/', authenticateUser, isAdmin, getBookings);
 
 // ✅ Mark a booking as completed
-router.patch('/:id/complete', authenticateUser, isAdmin, async (req, res) => {
-  try {
-    const booking = await Booking.findByIdAndUpdate(
-      req.params.id,
-      { status: req.body.status }, // use the value sent from frontend
-      { new: true }
-    );
-    res.json(booking);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
+router.patch('/:id/complete', authenticateUser, isAdmin, markBookingCompleted);
 
 // ✅ Delete a booking
 router.delete('/:id', authenticateUser, isAdmin, async (req, res) => {
